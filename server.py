@@ -6,6 +6,9 @@ from aioquic.h3.connection import H3Connection
 from aioquic.h3.events import HeadersReceived, WebTransportStreamDataReceived, DatagramReceived
 from aioquic.quic.configuration import QuicConfiguration
 from aioquic.quic.events import ProtocolNegotiated
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class WebTransportProtocol(QuicConnectionProtocol):
     def __init__(self, *args, **kwargs):
@@ -93,10 +96,16 @@ async def main():
         alpn_protocols=["h3"],
         max_datagram_frame_size=65536
     )
-    config.load_cert_chain("cert.pem", "key.pem")
+    
+    cert_path = os.getenv("CERT_PATH")
+    key_path = os.getenv("KEY_PATH")
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", 4433))
 
-    print("Server running on https://127.0.0.1:4433")
-    await serve(host="127.0.0.1", port=4433, configuration=config, create_protocol=WebTransportProtocol)
+    config.load_cert_chain(cert_path, key_path)
+
+    print(f"Server running on https://{host}:{port}")
+    await serve(host=host, port=port, configuration=config, create_protocol=WebTransportProtocol)
     await asyncio.Future()
 
 if __name__ == "__main__":
