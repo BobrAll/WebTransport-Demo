@@ -73,8 +73,15 @@ class WebTransportProtocol(QuicConnectionProtocol):
     def _send_file(self, stream_id, filename, content_type):
         if os.path.exists(filename):
             with open(filename, "rb") as f:
-                data = f.read()
-            self._send_response(stream_id, 200, data, content_type)
+                content = f.read()
+            
+            if filename == "script.js":
+                public_host = os.getenv("PUBLIC_HOST", os.getenv("HOST", "127.0.0.1"))
+                port = os.getenv("PORT", "4433")
+                wt_url = f"https://{public_host}:{port}/"
+                content = content.decode('utf-8').replace('{{WT_URL}}', wt_url).encode('utf-8')
+
+            self._send_response(stream_id, 200, content, content_type)
         else:
             self._send_error(stream_id, 404)
 

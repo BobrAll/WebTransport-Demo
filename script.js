@@ -7,9 +7,10 @@ let streamWriter;
 let dgramWriter;
 
 async function connect() {
-    transport = new WebTransport("https://127.0.0.1:4433/");
+    transport = new WebTransport("{{WT_URL}}");
+    
     await transport.ready;
-    log("WebTransport connected!");
+    log("WebTransport connected to {{WT_URL}}");
 
     const stream = await transport.createBidirectionalStream();
     streamWriter = stream.writable.getWriter();
