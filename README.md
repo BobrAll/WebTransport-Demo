@@ -7,6 +7,8 @@
 python3 -m venv venv
 source venv/bin/activate
 pip install aioquic cryptography
+pip3 install dotenv
+cp .env-example .env
 ```
 
 ### 2. Генерируем сертификаты
